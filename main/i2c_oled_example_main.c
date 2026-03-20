@@ -1,0 +1,222 @@
+#include "oled.h"
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+// 屏幕分辨率定义
+#define EXAMPLE_LCD_H_RES 128
+#define EXAMPLE_LCD_V_RES 64
+
+// 函数前向声明
+void testdrawtriangle(void);
+void testfilltriangle(void);
+
+// 测试函数：展示绘图功能
+void test_drawing_functions(void)
+{
+    // 初始化OLED
+    oled_init();
+    oled_clear();
+    oled_draw_string(0, 0, "Drawing Demo");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 1. 测试绘制直线
+    oled_draw_string(0, 0, "Testing lines");
+    oled_draw_line(10, 10, 110, 10);  // 水平线
+    oled_draw_line(10, 10, 10, 50);    // 垂直线
+    oled_draw_line(10, 50, 110, 10);   // 斜线
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 2. 测试绘制矩形
+    oled_draw_string(0, 0, "Testing rectangles");
+    oled_draw_rect(20, 15, 100, 45);    // 空心矩形
+    oled_fill_rect(30, 20, 90, 40);     // 实心矩形
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 3. 测试绘制圆形
+    oled_draw_string(0, 0, "Testing circles");
+    oled_draw_circle(64, 32, 20);    // 空心圆
+    oled_fill_circle(64, 32, 15);     // 实心圆
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 4. 测试绘制三角形
+    oled_draw_string(0, 0, "Testing triangles");
+    oled_draw_triangle(32, 10, 96, 10, 64, 50);    // 空心三角形
+    oled_fill_triangle(35, 15, 93, 15, 64, 45);     // 实心三角形
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 5. 测试绘制圆角矩形
+    oled_draw_string(0, 0, "Testing round rects");
+    oled_draw_round_rect(20, 15, 100, 45, 5);    // 空心圆角矩形
+    oled_fill_round_rect(30, 20, 90, 40, 5);     // 实心圆角矩形
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 6. 综合测试
+    oled_draw_string(0, 0, "Combined test");
+    oled_fill_rect(10, 10, 118, 54);         // 背景矩形
+    oled_draw_circle(64, 32, 20);            // 中心圆
+    oled_draw_line(10, 10, 118, 54);         // 对角线
+    oled_draw_line(10, 54, 118, 10);         // 对角线
+    oled_fill_triangle(32, 32, 64, 10, 96, 32);  // 顶部三角形
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 7. 测试文本与图形结合
+    oled_draw_string(0, 0, "Text & Graphics");
+    oled_fill_round_rect(10, 15, 118, 49, 5);     // 背景
+    oled_draw_chinese_by_name(20, 20, "你");      // 显示汉字
+    oled_draw_chinese_by_name(36, 20, "好");      // 显示汉字
+    oled_draw_string(56, 25, "OLED!");           // 显示英文
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 8. 三角形动画测试
+    oled_draw_string(0, 0, "Triangle animation");
+    testdrawtriangle();
+    testfilltriangle();
+    oled_clear();
+    
+    // 9. 最终显示
+    oled_draw_string(0, 0, "All functions tested!");
+    oled_draw_string(0, 10, "Drawing demo");
+    oled_draw_string(0, 20, "Complete!");
+    oled_refresh();
+}
+
+// 测试绘制三角形动画
+void testdrawtriangle(void) {
+    oled_clear();
+
+    int16_t max_size = (EXAMPLE_LCD_H_RES > EXAMPLE_LCD_V_RES) ? EXAMPLE_LCD_H_RES/2 : EXAMPLE_LCD_V_RES/2;
+    for(int16_t i=0; i<max_size; i+=5) {
+        oled_draw_triangle(
+            EXAMPLE_LCD_H_RES/2  , EXAMPLE_LCD_V_RES/2-i,
+            EXAMPLE_LCD_H_RES/2-i, EXAMPLE_LCD_V_RES/2+i,
+            EXAMPLE_LCD_H_RES/2+i, EXAMPLE_LCD_V_RES/2+i);
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+}
+
+// 测试填充三角形动画
+void testfilltriangle(void) {
+    oled_clear();
+
+    int16_t max_size = (EXAMPLE_LCD_H_RES > EXAMPLE_LCD_V_RES) ? EXAMPLE_LCD_H_RES/2 : EXAMPLE_LCD_V_RES/2;
+    for(int16_t i=max_size; i>0; i-=5) {
+        // 交替填充和清除
+        oled_fill_triangle(
+            EXAMPLE_LCD_H_RES/2  , EXAMPLE_LCD_V_RES/2-i,
+            EXAMPLE_LCD_H_RES/2-i, EXAMPLE_LCD_V_RES/2+i,
+            EXAMPLE_LCD_H_RES/2+i, EXAMPLE_LCD_V_RES/2+i);
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(1));
+        oled_clear();
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+}
+
+// 测试函数：逐个展示OLED功能
+void test_oled_functions(void)
+{
+    // 初始化OLED
+    oled_init();
+    oled_clear();
+    oled_draw_string(0, 0, "Initializing OLED...");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 2. 测试绘制像素
+    oled_draw_string(0, 0, "Testing pixels");
+    for (int y = 10; y < 54; y += 8) {
+        for (int x = 10; x < 118; x += 8) {
+            oled_draw_pixel(x, y, 1);
+            oled_refresh();
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
+    }
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 3. 测试绘制字符
+    oled_draw_string(0, 0, "Testing chars");
+    char test_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    int x = 0, y = 10;
+    for (int i = 0; test_chars[i]; i++) {
+        oled_draw_char(x, y, test_chars[i]);
+        x += 8;
+        if (x >= 120) {
+            x = 0;
+            y += 8;
+        }
+    }
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 4. 测试绘制字符串（自动换行）
+    oled_draw_string(0, 0, "Testing string with auto line wrap: Hello World! This is a long string to test line wrapping functionality.");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 5. 测试绘制汉字（通过名称）
+    oled_draw_string(0, 0, "Testing Chinese (by name)");
+    oled_draw_chinese_by_name(0, 10, "你");
+    oled_draw_chinese_by_name(16, 10, "好");
+    oled_draw_chinese_by_name(32, 10, "中");
+    oled_draw_chinese_by_name(48, 10, "文");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 6. 测试绘制中英文混合字符串
+    oled_draw_string(0, 0, "Testing mixed string");
+    oled_draw_string_cn(0, 10, "你好世界 Hello World!");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 7. 测试清空功能
+    oled_draw_string(0, 0, "Testing clear");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    oled_clear();
+    oled_draw_string(0, 0, "Cleared!");
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+    
+    // 8. 最终显示
+    oled_draw_string(0, 0, "All functions tested!");
+    oled_draw_string(0, 10, "OLED functions demo");
+    oled_draw_string(0, 20, "Complete!");
+    oled_refresh();
+}
+
+void app_main(void)
+{
+    // 运行绘图功能测试
+    test_drawing_functions();
+    
+    // 运行基本功能测试（可选）
+    // test_oled_functions();
+}
