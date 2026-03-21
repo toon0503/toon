@@ -97,6 +97,16 @@ void oled_draw_ellipse(int x0, int y0, int a, int b);
 // b: 短半轴（Y方向半径）
 void oled_fill_ellipse(int x0, int y0, int a, int b);
 
+// 绘制五角星
+// x0, y0: 五角星中心坐标
+// radius: 五角星外接圆半径
+void oled_draw_star(int x0, int y0, int radius);
+
+// 绘制实心五角星
+// x0, y0: 五角星中心坐标
+// radius: 五角星外接圆半径
+void oled_fill_star(int x0, int y0, int radius);
+
 // 刷新显示缓冲区到OLED屏幕
 void oled_refresh(void);
 

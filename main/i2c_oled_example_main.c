@@ -1,4 +1,5 @@
 #include "oled.h"
+#include <math.h>
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -8,7 +9,103 @@
 #define EXAMPLE_LCD_V_RES 64
 
 // 函数前向声明
-void test_ellipse_animation(void);
+
+// 空心圆渐变到五角星动画
+void test_circle_to_star_animation(void)
+{
+    int x = 64, y = 32;  // 中心点
+    int radius = 20;        // 半径
+    
+    // 第一阶段：显示空心圆
+    oled_clear();
+    oled_draw_circle(x, y, radius);
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(500));
+    
+    // 第二阶段：渐变动画（从圆到五角星）
+    for (int i = 0; i <= 10; i++) {
+        oled_clear();
+        
+        // 绘制过渡形状
+        float ratio = (float)i / 10.0;  // 渐变比例 0.0 -> 1.0
+        
+        // 计算过渡顶点
+        int points[10]; // 存储5个顶点坐标
+        float angle = -90.0 * 3.1415926 / 180.0; // 从-90度开始（顶点朝上）
+        float step = 72.0 * 3.1415926 / 180.0; // 72度的弧度
+        
+        for (int j = 0; j < 5; j++) {
+            // 外顶点：从圆形逐渐变为五角星外顶点
+            float outer_r = radius * (1.0 - ratio * 0.618); // 圆形半径 -> 五角星外顶点
+            points[j*2] = x + (int)(outer_r * cos(angle));
+            points[j*2+1] = y + (int)(outer_r * sin(angle));
+            angle += step;
+        }
+        
+        // 绘制过渡形状（跳过一个顶点连接）
+        oled_draw_line(points[0], points[1], points[4], points[5]);
+        oled_draw_line(points[4], points[5], points[8], points[9]);
+        oled_draw_line(points[8], points[9], points[2], points[3]);
+        oled_draw_line(points[2], points[3], points[6], points[7]);
+        oled_draw_line(points[6], points[7], points[0], points[1]);
+        
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+    
+    // 第三阶段：显示完整五角星
+    oled_clear();
+    oled_draw_star(x, y, radius);
+    oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    
+    oled_clear();
+    vTaskDelay(pdMS_TO_TICKS(500));
+}
+
+// 五角星顺时针旋转动画（1度/秒）
+void test_star_rotation(void)
+{
+    int x = 64, y = 32;  // 中心点
+    int radius = 20;        // 半径
+    float current_angle = -90.0 * 3.1415926 / 180.0; // 初始角度（顶点朝上）
+    float rotation_speed = 18.0 * 3.1415926 / 180.0; // 旋转速度：1度/秒
+    float step = 72.0 * 3.1415926 / 180.0; // 72度的弧度
+    
+    // 旋转360度
+    for (int frame = 0; frame < 360; frame++) {
+        oled_clear();
+        
+        // 计算当前角度的五角星顶点
+        int points[10]; // 存储5个外顶点坐标
+        float angle = current_angle;
+        
+        for (int i = 0; i < 5; i++) {
+            points[i*2] = x + (int)(radius * cos(angle));
+            points[i*2+1] = y + (int)(radius * sin(angle));
+            angle += step;
+        }
+        
+        // 绘制五角星（跳过一个顶点连接）
+        oled_draw_line(points[0], points[1], points[4], points[5]);
+        oled_draw_line(points[4], points[5], points[8], points[9]);
+        oled_draw_line(points[8], points[9], points[2], points[3]);
+        oled_draw_line(points[2], points[3], points[6], points[7]);
+        oled_draw_line(points[6], points[7], points[0], points[1]);
+        
+        oled_refresh();
+        
+        // 更新角度（顺时针旋转）
+        current_angle += rotation_speed;
+        
+        // 延迟1秒（1度/秒）
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+    
+    oled_clear();
+    vTaskDelay(pdMS_TO_TICKS(500));
+}
+
 
 
 
@@ -20,69 +117,16 @@ void app_main(void)
     oled_draw_string(0, 0, "Initializing OLED...");
     oled_refresh();
     vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
+    
+    // 测试空心圆渐变到五角星动画
+
+    
+    // 测试五角星旋转动画
+    test_star_rotation();
     
     while(1)
     {
-        test_ellipse_animation();
+
     }
 }
 
-// 利用 椭圆动画   眨眼的表情
-void test_ellipse_animation(void) {
-    oled_clear();
-    int x1 = 32, y1 = 32;  // 第二个椭圆的初始位置
-    int a1 = 20, b1 = 20;  // 第二个椭圆的长半轴和短半轴   
-    int x2 = 96, y2 = 32;  // 第二个椭圆的初始位置
-    int a2 = 20, b2 = 20;  // 第二个椭圆的长半轴和短半轴
-    oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
-    oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
-    oled_refresh();      
-     vTaskDelay(pdMS_TO_TICKS(100));  
-    // 第一阶段：x轴从20增加到40，y轴从20减少到5
-    for (int i = 0; i < 5; i++) {
-        oled_clear();
-                // 绘制左侧圆和右侧椭圆
-
-        oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
-        oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
-        
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(20));
-        
-        // 更新右侧椭圆的尺寸
-        if (a2 < 40) {
-            a2 = a2 + 4;  // x轴逐步增加到40
-        }
-        if (b2 > 5) {
-            b2 = b2 - 3;  // y轴逐步减少到5
-        }
-    }
-    
-    // 第二阶段：x轴从40恢复到20，y轴从5恢复到20
-     for (int i = 0; i < 5; i++) {
-        oled_clear();
-        
-        // 绘制左侧圆和右侧椭圆
-        oled_fill_ellipse(x1, y1,  b1, a1);    // 左侧椭圆
-        oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
-        
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(30));
-        
-        // 更新右侧椭圆的尺寸（恢复）
-        if (a2 > 20) {
-            a2 = a2 - 4;  // x轴逐步恢复到20
-        }
-        if (b2 < 20) {
-            b2 = b2 + 3;  // y轴逐步恢复到20
-        }
-    } 
-    
-    vTaskDelay(pdMS_TO_TICKS(100));
-    oled_clear();
-    oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
-    oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
-    oled_refresh(); 
-    vTaskDelay(pdMS_TO_TICKS(100));
-}

@@ -1,6 +1,7 @@
 #include "oled.h"
 #include "font8x8.h"
 #include "font16x16.h"
+#include <math.h>
 #include <string.h>
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
@@ -685,4 +686,62 @@ void oled_fill_ellipse(int x0, int y0, int a, int b)
             err += two_b2 * x + b2;
         }
     }
+}
+
+// 绘制五角星
+void oled_draw_star(int x0, int y0, int radius)
+{
+    int points[10]; // 存储5个外顶点坐标
+    float angle = -90.0 * 3.1415926 / 180.0; // 从-90度开始（顶点朝上）
+    float step = 72.0 * 3.1415926 / 180.0; // 72度的弧度
+    
+    // 计算五角星的5个外顶点坐标
+    for (int i = 0; i < 5; i++) {
+        points[i*2] = x0 + (int)(radius * cos(angle));
+        points[i*2+1] = y0 + (int)(radius * sin(angle));
+        angle += step;
+    }
+    
+    // 连接顶点绘制五角星（跳过一个顶点）
+    oled_draw_line(points[0], points[1], points[4], points[5]);
+    oled_draw_line(points[4], points[5], points[8], points[9]);
+    oled_draw_line(points[8], points[9], points[2], points[3]);
+    oled_draw_line(points[2], points[3], points[6], points[7]);
+    oled_draw_line(points[6], points[7], points[0], points[1]);
+}
+
+// 绘制实心五角星
+void oled_fill_star(int x0, int y0, int radius)
+{
+    int outer_points[10]; // 存储5个外顶点坐标
+    int inner_points[10]; // 存储5个内顶点坐标
+    float angle = -90.0 * 3.1415926 / 180.0; // 从-90度开始（顶点朝上）
+    float step = 72.0 * 3.1415926 / 180.0; // 72度的弧度
+    
+    // 计算五角星的5个外顶点坐标
+    for (int i = 0; i < 5; i++) {
+        outer_points[i*2] = x0 + (int)(radius * cos(angle));
+        outer_points[i*2+1] = y0 + (int)(radius * sin(angle));
+        angle += step;
+    }
+    
+    // 计算5个内顶点坐标（内接圆，半径为外接圆的0.382倍）
+    angle = -90.0 * 3.1415926 / 180.0 + step / 2; // 内顶点从外顶点之间开始
+    for (int i = 0; i < 5; i++) {
+        inner_points[i*2] = x0 + (int)(radius * 0.382 * cos(angle));
+        inner_points[i*2+1] = y0 + (int)(radius * 0.382 * sin(angle));
+        angle += step;
+    }
+    
+    // 填充五角星（每个角由一个外顶点和两个相邻的内顶点组成三角形）
+    oled_fill_triangle(outer_points[0], outer_points[1], inner_points[0], inner_points[1], inner_points[4], inner_points[5]);
+    oled_fill_triangle(outer_points[2], outer_points[3], inner_points[2], inner_points[3], inner_points[0], inner_points[1]);
+    oled_fill_triangle(outer_points[4], outer_points[5], inner_points[4], inner_points[5], inner_points[2], inner_points[3]);
+    oled_fill_triangle(outer_points[6], outer_points[7], inner_points[6], inner_points[7], inner_points[4], inner_points[5]);
+    oled_fill_triangle(outer_points[8], outer_points[9], inner_points[8], inner_points[9], inner_points[6], inner_points[7]);
+    
+    // 填充中心的五边形（用多个三角形填充）
+    oled_fill_triangle(inner_points[0], inner_points[1], inner_points[2], inner_points[3], inner_points[4], inner_points[5]);
+    oled_fill_triangle(inner_points[0], inner_points[1], inner_points[4], inner_points[5], inner_points[6], inner_points[7]);
+    oled_fill_triangle(inner_points[0], inner_points[1], inner_points[6], inner_points[7], inner_points[8], inner_points[9]);
 }
