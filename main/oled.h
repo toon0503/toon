@@ -85,6 +85,18 @@ void oled_draw_round_rect(int x1, int y1, int x2, int y2, int radius);
 // radius: 圆角半径
 void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius);
 
+// 绘制椭圆
+// x0, y0: 椭圆中心坐标
+// a: 长半轴（X方向半径）
+// b: 短半轴（Y方向半径）
+void oled_draw_ellipse(int x0, int y0, int a, int b);
+
+// 绘制实心椭圆
+// x0, y0: 椭圆中心坐标
+// a: 长半轴（X方向半径）
+// b: 短半轴（Y方向半径）
+void oled_fill_ellipse(int x0, int y0, int a, int b);
+
 // 刷新显示缓冲区到OLED屏幕
 void oled_refresh(void);
 

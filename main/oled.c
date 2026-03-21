@@ -617,3 +617,72 @@ void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
 }
+
+// 绘制椭圆
+void oled_draw_ellipse(int x0, int y0, int a, int b)
+{
+    int x = 0;
+    int y = b;
+    int a2 = a * a;
+    int b2 = b * b;
+    int two_a2 = 2 * a2;
+    int two_b2 = 2 * b2;
+    int err = 0;
+    int dx = 0;
+    int dy = two_a2 * y;
+
+    while (dy >= dx) {
+        oled_draw_pixel(x0 + x, y0 + y, 1);
+        oled_draw_pixel(x0 - x, y0 + y, 1);
+        oled_draw_pixel(x0 + x, y0 - y, 1);
+        oled_draw_pixel(x0 - x, y0 - y, 1);
+
+        if (err > 0) {
+            y--;
+            dy -= two_b2;
+            err -= two_a2 * y + a2;
+        }
+        if (err <= 0) {
+            x++;
+            dx += two_b2;
+            err += two_b2 * x + b2;
+        }
+    }
+}
+
+// 绘制实心椭圆
+void oled_fill_ellipse(int x0, int y0, int a, int b)
+{
+    int x = 0;
+    int y = b;
+    int a2 = a * a;
+    int b2 = b * b;
+    int two_a2 = 2 * a2;
+    int two_b2 = 2 * b2;
+    int err = 0;
+    int dx = 0;
+    int dy = two_a2 * y;
+
+    while (y >= 0) {
+        int x_start = x0 - x;
+        int x_end = x0 + x;
+        
+        for (int i = x_start; i <= x_end; i++) {
+            oled_draw_pixel(i, y0 + y, 1);
+            if (y != 0) {
+                oled_draw_pixel(i, y0 - y, 1);
+            }
+        }
+
+        if (err > 0) {
+            y--;
+            dy -= two_b2;
+            err -= two_a2 * y + a2;
+        }
+        if (err <= 0) {
+            x++;
+            dx += two_b2;
+            err += two_b2 * x + b2;
+        }
+    }
+}

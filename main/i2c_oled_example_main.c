@@ -8,238 +8,9 @@
 #define EXAMPLE_LCD_V_RES 64
 
 // 函数前向声明
-void testdrawtriangle(void);
-void testfilltriangle(void);
-void test_circle_animation(void);
+void test_ellipse_animation(void);
 
-// 测试函数：展示绘图功能
-void test_drawing_functions(void)
-{
 
-    
-    // 1. 测试绘制直线
-    oled_draw_string(0, 0, "Testing lines");
-    oled_draw_line(10, 10, 110, 10);  // 水平线
-    oled_draw_line(10, 10, 10, 50);    // 垂直线
-    oled_draw_line(10, 50, 110, 10);   // 斜线
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 2. 测试绘制矩形
-    oled_draw_string(0, 0, "Testing rectangles");
-    oled_draw_rect(20, 15, 100, 45);    // 空心矩形
-    oled_fill_rect(30, 20, 90, 40);     // 实心矩形
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 3. 测试绘制圆形
-    oled_draw_string(0, 0, "Testing circles");
-    oled_draw_circle(32, 32, 20);    // 空心圆
-    oled_fill_circle(96, 32, 20);     // 实心圆
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 4. 测试绘制三角形
-    oled_draw_string(0, 0, "Testing triangles");
-    oled_draw_triangle(32, 10, 96, 10, 64, 50);    // 空心三角形
-    oled_fill_triangle(35, 15, 93, 15, 64, 45);     // 实心三角形
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 5. 测试绘制圆角矩形
-    oled_draw_string(0, 0, "Testing round rects");
-    oled_draw_round_rect(20, 15, 100, 45, 5);    // 空心圆角矩形
-    oled_fill_round_rect(30, 20, 90, 40, 5);     // 实心圆角矩形
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 6. 综合测试
-    oled_draw_string(0, 0, "Combined test");
-    oled_fill_rect(10, 10, 118, 54);         // 背景矩形
-    oled_draw_circle(64, 32, 20);            // 中心圆
-    oled_draw_line(10, 10, 118, 54);         // 对角线
-    oled_draw_line(10, 54, 118, 10);         // 对角线
-    oled_fill_triangle(32, 32, 64, 10, 96, 32);  // 顶部三角形
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 7. 测试文本与图形结合
-    oled_draw_string(0, 0, "Text & Graphics");
-    oled_fill_round_rect(10, 15, 118, 49, 5);     // 背景
-    oled_draw_chinese_by_name(20, 20, "你");      // 显示汉字
-    oled_draw_chinese_by_name(36, 20, "好");      // 显示汉字
-    oled_draw_string(56, 25, "OLED!");           // 显示英文
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 8. 三角形动画测试
-    oled_draw_string(0, 0, "Triangle animation");
-    testdrawtriangle();
-    testfilltriangle();
-    oled_clear();
-    
-    // 9. 圆形动画测试
-    oled_draw_string(0, 0, "Circle animation");
-    test_circle_animation();
-    oled_clear();
-    
-    // 10. 最终显示
-    oled_draw_string(0, 0, "All functions tested!");
-    oled_draw_string(0, 10, "Drawing demo");
-    oled_draw_string(0, 20, "Complete!");
-    oled_refresh();
-}
-
-// 测试绘制三角形动画
-void testdrawtriangle(void) {
-    oled_clear();
-
-    int16_t max_size = (EXAMPLE_LCD_H_RES > EXAMPLE_LCD_V_RES) ? EXAMPLE_LCD_H_RES/2 : EXAMPLE_LCD_V_RES/2;
-    for(int16_t i=0; i<max_size; i+=5) {
-        oled_draw_triangle(
-            EXAMPLE_LCD_H_RES/2  , EXAMPLE_LCD_V_RES/2-i,
-            EXAMPLE_LCD_H_RES/2-i, EXAMPLE_LCD_V_RES/2+i,
-            EXAMPLE_LCD_H_RES/2+i, EXAMPLE_LCD_V_RES/2+i);
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(1));
-    }
-
-    vTaskDelay(pdMS_TO_TICKS(2000));
-}
-
-// 测试填充三角形动画
-void testfilltriangle(void) {
-    oled_clear();
-
-    int16_t max_size = (EXAMPLE_LCD_H_RES > EXAMPLE_LCD_V_RES) ? EXAMPLE_LCD_H_RES/2 : EXAMPLE_LCD_V_RES/2;
-    for(int16_t i=max_size; i>0; i-=5) {
-        // 交替填充和清除
-        oled_fill_triangle(
-            EXAMPLE_LCD_H_RES/2  , EXAMPLE_LCD_V_RES/2-i,
-            EXAMPLE_LCD_H_RES/2-i, EXAMPLE_LCD_V_RES/2+i,
-            EXAMPLE_LCD_H_RES/2+i, EXAMPLE_LCD_V_RES/2+i);
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(1));
-        oled_clear();
-    }
-
-    vTaskDelay(pdMS_TO_TICKS(2000));
-}
-
-// 测试圆形动画
-void test_circle_animation(void) {
-    oled_clear();
-    
-    int x1 = 32, y1 = 32;  // 第一个圆的初始位置
-    int x2 = 96, y2 = 32;  // 第二个圆的初始位置
-    int radius = 20;       // 圆的半径
-    int dx = 5, dy = 5;     // 每次移动的距离
-    int direction = 1;      // 移动方向
-    
-    // 动画循环
-    for (int i = 0; i < 50; i++) {  // 循环次数
-        oled_clear();
-        
-        // 绘制两个圆
-        oled_draw_circle(x1, y1, radius);
-        oled_fill_circle(x2, y2, radius);
-        
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(5));  // 刷新间隔5ms
-        
-        // 更新位置
-        x1 += dx * direction;
-        y1 += dy * direction;
-        x2 += dx * direction;
-        y2 += dy * direction;
-        
-        // 检查边界，反弹
-        if (x1 - radius <= 0 || x1 + radius >= EXAMPLE_LCD_H_RES || 
-            y1 - radius <= 0 || y1 + radius >= EXAMPLE_LCD_V_RES) {
-            direction *= -1;  // 反转方向
-        }
-    }
-    
-    vTaskDelay(pdMS_TO_TICKS(2000));
-}
-
-// 测试函数：逐个展示OLED功能
-void test_oled_functions(void)
-{
-    // 2. 测试绘制像素
-    oled_draw_string(0, 0, "Testing pixels");
-    for (int y = 10; y < 54; y += 8) {
-        for (int x = 10; x < 118; x += 8) {
-            oled_draw_pixel(x, y, 1);
-            oled_refresh();
-            vTaskDelay(pdMS_TO_TICKS(100));
-        }
-    }
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 3. 测试绘制字符
-    oled_draw_string(0, 0, "Testing chars");
-    char test_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    int x = 0, y = 10;
-    for (int i = 0; test_chars[i]; i++) {
-        oled_draw_char(x, y, test_chars[i]);
-        x += 8;
-        if (x >= 120) {
-            x = 0;
-            y += 8;
-        }
-    }
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 4. 测试绘制字符串（自动换行）
-    oled_draw_string(0, 0, "Testing string with auto line wrap: Hello World! This is a long string to test line wrapping functionality.");
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 5. 测试绘制汉字（通过名称）
-    oled_draw_string(0, 0, "Testing Chinese (by name)");
-    oled_draw_chinese_by_name(0, 10, "你");
-    oled_draw_chinese_by_name(16, 10, "好");
-    oled_draw_chinese_by_name(32, 10, "中");
-    oled_draw_chinese_by_name(48, 10, "文");
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 6. 测试绘制中英文混合字符串
-    oled_draw_string(0, 0, "Testing mixed string");
-    oled_draw_string_cn(0, 10, "你好世界 Hello World!");
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 7. 测试清空功能
-    oled_draw_string(0, 0, "Testing clear");
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(1000));
-    oled_clear();
-    oled_draw_string(0, 0, "Cleared!");
-    oled_refresh();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    oled_clear();
-    
-    // 8. 最终显示
-    oled_draw_string(0, 0, "All functions tested!");
-    oled_draw_string(0, 10, "OLED functions demo");
-    oled_draw_string(0, 20, "Complete!");
-    oled_refresh();
-}
 
 void app_main(void)
 {
@@ -253,7 +24,65 @@ void app_main(void)
     
     while(1)
     {
-        test_drawing_functions();
-        test_oled_functions();
+        test_ellipse_animation();
     }
+}
+
+// 利用 椭圆动画   眨眼的表情
+void test_ellipse_animation(void) {
+    oled_clear();
+    int x1 = 32, y1 = 32;  // 第二个椭圆的初始位置
+    int a1 = 20, b1 = 20;  // 第二个椭圆的长半轴和短半轴   
+    int x2 = 96, y2 = 32;  // 第二个椭圆的初始位置
+    int a2 = 20, b2 = 20;  // 第二个椭圆的长半轴和短半轴
+    oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
+    oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
+    oled_refresh();      
+     vTaskDelay(pdMS_TO_TICKS(100));  
+    // 第一阶段：x轴从20增加到40，y轴从20减少到5
+    for (int i = 0; i < 5; i++) {
+        oled_clear();
+                // 绘制左侧圆和右侧椭圆
+
+        oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
+        oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
+        
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(20));
+        
+        // 更新右侧椭圆的尺寸
+        if (a2 < 40) {
+            a2 = a2 + 4;  // x轴逐步增加到40
+        }
+        if (b2 > 5) {
+            b2 = b2 - 3;  // y轴逐步减少到5
+        }
+    }
+    
+    // 第二阶段：x轴从40恢复到20，y轴从5恢复到20
+     for (int i = 0; i < 5; i++) {
+        oled_clear();
+        
+        // 绘制左侧圆和右侧椭圆
+        oled_fill_ellipse(x1, y1,  b1, a1);    // 左侧椭圆
+        oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
+        
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(30));
+        
+        // 更新右侧椭圆的尺寸（恢复）
+        if (a2 > 20) {
+            a2 = a2 - 4;  // x轴逐步恢复到20
+        }
+        if (b2 < 20) {
+            b2 = b2 + 3;  // y轴逐步恢复到20
+        }
+    } 
+    
+    vTaskDelay(pdMS_TO_TICKS(100));
+    oled_clear();
+    oled_fill_ellipse(x1, y1, a1, b1);    // 左侧椭圆
+    oled_fill_ellipse(x2, y2, a2, b2);    // 右侧椭圆
+    oled_refresh(); 
+    vTaskDelay(pdMS_TO_TICKS(100));
 }
