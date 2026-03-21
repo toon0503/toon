@@ -437,15 +437,15 @@ void oled_draw_round_rect(int x1, int y1, int x2, int y2, int radius)
         oled_draw_pixel(x2, y, 1);
     }
 
-    // 绘制四个圆角（只绘制圆弧部分）
+    // 绘制四个圆角（绘制四分之一圆弧）
     int r = radius;
     int x, y, err = 0;
     
-    // 左上角圆角
-    x = r; y = 0;
+    // 左上角圆角（绘制右下象限）
+    x = r; y = 0; err = 0;
     while (x >= y) {
-        oled_draw_pixel(x1 + x, y1 + y, 1);
-        oled_draw_pixel(x1 + y, y1 + x, 1);
+        oled_draw_pixel(x1 + r - x, y1 + r - y, 1);
+        oled_draw_pixel(x1 + r - y, y1 + r - x, 1);
         
         if (err <= 0) {
             y++;
@@ -457,11 +457,11 @@ void oled_draw_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 右上角圆角
+    // 右上角圆角（绘制左下象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        oled_draw_pixel(x2 - x, y1 + y, 1);
-        oled_draw_pixel(x2 - y, y1 + x, 1);
+        oled_draw_pixel(x2 - r + x, y1 + r - y, 1);
+        oled_draw_pixel(x2 - r + y, y1 + r - x, 1);
         
         if (err <= 0) {
             y++;
@@ -473,11 +473,11 @@ void oled_draw_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 左下角圆角
+    // 左下角圆角（绘制右上象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        oled_draw_pixel(x1 + x, y2 - y, 1);
-        oled_draw_pixel(x1 + y, y2 - x, 1);
+        oled_draw_pixel(x1 + r - x, y2 - r + y, 1);
+        oled_draw_pixel(x1 + r - y, y2 - r + x, 1);
         
         if (err <= 0) {
             y++;
@@ -489,11 +489,11 @@ void oled_draw_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 右下角圆角
+    // 右下角圆角（绘制左上象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        oled_draw_pixel(x2 - x, y2 - y, 1);
-        oled_draw_pixel(x2 - y, y2 - x, 1);
+        oled_draw_pixel(x2 - r + x, y2 - r + y, 1);
+        oled_draw_pixel(x2 - r + y, y2 - r + x, 1);
         
         if (err <= 0) {
             y++;
@@ -537,14 +537,14 @@ void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius)
     int r = radius;
     int x, y, err = 0;
     
-    // 左上角圆角
+    // 左上角圆角（填充右下象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        for (int i = x1 + y; i <= x1 + x; i++) {
-            oled_draw_pixel(i, y1 + y, 1);
+        for (int i = x1 + r - x; i <= x1 + r; i++) {
+            oled_draw_pixel(i, y1 + r - y, 1);
         }
-        for (int i = x1 + y; i <= x1 + x; i++) {
-            oled_draw_pixel(i, y1 + x, 1);
+        for (int i = x1 + r - y; i <= x1 + r; i++) {
+            oled_draw_pixel(i, y1 + r - x, 1);
         }
         
         if (err <= 0) {
@@ -557,14 +557,14 @@ void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 右上角圆角
+    // 右上角圆角（填充左下象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        for (int i = x2 - x; i <= x2 - y; i++) {
-            oled_draw_pixel(i, y1 + y, 1);
+        for (int i = x2 - r; i <= x2 - r + x; i++) {
+            oled_draw_pixel(i, y1 + r - y, 1);
         }
-        for (int i = x2 - x; i <= x2 - y; i++) {
-            oled_draw_pixel(i, y1 + x, 1);
+        for (int i = x2 - r; i <= x2 - r + y; i++) {
+            oled_draw_pixel(i, y1 + r - x, 1);
         }
         
         if (err <= 0) {
@@ -577,14 +577,14 @@ void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 左下角圆角
+    // 左下角圆角（填充右上象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        for (int i = x1 + y; i <= x1 + x; i++) {
-            oled_draw_pixel(i, y2 - y, 1);
+        for (int i = x1 + r - x; i <= x1 + r; i++) {
+            oled_draw_pixel(i, y2 - r + y, 1);
         }
-        for (int i = x1 + y; i <= x1 + x; i++) {
-            oled_draw_pixel(i, y2 - x, 1);
+        for (int i = x1 + r - y; i <= x1 + r; i++) {
+            oled_draw_pixel(i, y2 - r + x, 1);
         }
         
         if (err <= 0) {
@@ -597,14 +597,14 @@ void oled_fill_round_rect(int x1, int y1, int x2, int y2, int radius)
         }
     }
     
-    // 右下角圆角
+    // 右下角圆角（填充左上象限）
     x = r; y = 0; err = 0;
     while (x >= y) {
-        for (int i = x2 - x; i <= x2 - y; i++) {
-            oled_draw_pixel(i, y2 - y, 1);
+        for (int i = x2 - r; i <= x2 - r + x; i++) {
+            oled_draw_pixel(i, y2 - r + y, 1);
         }
-        for (int i = x2 - x; i <= x2 - y; i++) {
-            oled_draw_pixel(i, y2 - x, 1);
+        for (int i = x2 - r; i <= x2 - r + y; i++) {
+            oled_draw_pixel(i, y2 - r + x, 1);
         }
         
         if (err <= 0) {

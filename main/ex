@@ -1,19 +1,4 @@
-#include "oled.h"
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
-// 屏幕分辨率定义
-#define EXAMPLE_LCD_H_RES 128
-#define EXAMPLE_LCD_V_RES 64
-
-// 函数前向声明
-void testdrawtriangle(void);
-void testfilltriangle(void);
-void test_circle_animation(void);
-
-// 测试函数：展示绘图功能
-void test_drawing_functions(void)
+/*void test_drawing_functions(void)
 {
 
     
@@ -36,8 +21,8 @@ void test_drawing_functions(void)
     
     // 3. 测试绘制圆形
     oled_draw_string(0, 0, "Testing circles");
-    oled_draw_circle(32, 32, 20);    // 空心圆
-    oled_fill_circle(96, 32, 20);     // 实心圆
+    oled_draw_circle(64, 32, 20);    // 空心圆
+    oled_fill_circle(64, 32, 15);     // 实心圆
     oled_refresh();
     vTaskDelay(pdMS_TO_TICKS(2000));
     oled_clear();
@@ -85,16 +70,13 @@ void test_drawing_functions(void)
     testfilltriangle();
     oled_clear();
     
-    // 9. 圆形动画测试
-    oled_draw_string(0, 0, "Circle animation");
-    test_circle_animation();
-    oled_clear();
-    
-    // 10. 最终显示
+    // 9. 最终显示
     oled_draw_string(0, 0, "All functions tested!");
     oled_draw_string(0, 10, "Drawing demo");
     oled_draw_string(0, 20, "Complete!");
     oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
 }
 
 // 测试绘制三角形动画
@@ -133,46 +115,11 @@ void testfilltriangle(void) {
     vTaskDelay(pdMS_TO_TICKS(2000));
 }
 
-// 测试圆形动画
-void test_circle_animation(void) {
-    oled_clear();
-    
-    int x1 = 32, y1 = 32;  // 第一个圆的初始位置
-    int x2 = 96, y2 = 32;  // 第二个圆的初始位置
-    int radius = 20;       // 圆的半径
-    int dx = 5, dy = 5;     // 每次移动的距离
-    int direction = 1;      // 移动方向
-    
-    // 动画循环
-    for (int i = 0; i < 50; i++) {  // 循环次数
-        oled_clear();
-        
-        // 绘制两个圆
-        oled_draw_circle(x1, y1, radius);
-        oled_fill_circle(x2, y2, radius);
-        
-        oled_refresh();
-        vTaskDelay(pdMS_TO_TICKS(5));  // 刷新间隔5ms
-        
-        // 更新位置
-        x1 += dx * direction;
-        y1 += dy * direction;
-        x2 += dx * direction;
-        y2 += dy * direction;
-        
-        // 检查边界，反弹
-        if (x1 - radius <= 0 || x1 + radius >= EXAMPLE_LCD_H_RES || 
-            y1 - radius <= 0 || y1 + radius >= EXAMPLE_LCD_V_RES) {
-            direction *= -1;  // 反转方向
-        }
-    }
-    
-    vTaskDelay(pdMS_TO_TICKS(2000));
-}
-
 // 测试函数：逐个展示OLED功能
 void test_oled_functions(void)
 {
+
+    
     // 2. 测试绘制像素
     oled_draw_string(0, 0, "Testing pixels");
     for (int y = 10; y < 54; y += 8) {
@@ -239,21 +186,30 @@ void test_oled_functions(void)
     oled_draw_string(0, 10, "OLED functions demo");
     oled_draw_string(0, 20, "Complete!");
     oled_refresh();
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    oled_clear();
+
 }
 
 void app_main(void)
 {
-    // 初始化OLED
+        // 初始化OLED
     oled_init();
     oled_clear();
     oled_draw_string(0, 0, "Initializing OLED...");
     oled_refresh();
     vTaskDelay(pdMS_TO_TICKS(2000));
     oled_clear();
-    
+    oled_refresh();
     while(1)
     {
-        test_drawing_functions();
+      
         test_oled_functions();
+          test_drawing_functions();
     }
-}
+    // // 运行绘图功能测试
+    // test_drawing_functions();
+    
+    // 运行基本功能测试（可选）
+    // test_oled_functions();
+}  */
