@@ -110,4 +110,8 @@ void oled_fill_star(int x0, int y0, int radius);
 // 刷新显示缓冲区到OLED屏幕
 void oled_refresh(void);
 
+
+// 五角星顺时针旋转动画（1度/秒）
+void test_star_rotation(void);
+
 #endif // OLED_H
