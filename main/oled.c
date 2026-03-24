@@ -68,6 +68,15 @@ void oled_init(void)
 
     esp_lcd_panel_reset(g_panel_handle);
     esp_lcd_panel_init(g_panel_handle);
+    
+    // 设置屏幕镜像/翻转参数
+    // mirror_x: true=水平翻转, false=不翻转
+    // mirror_y: true=垂直翻转, false=不翻转
+    esp_lcd_panel_mirror(g_panel_handle, true, true);
+    
+    // 设置是否交换X和Y轴（结合mirror可实现旋转）
+    // swap_axes: true=交换, false=不交换
+    esp_lcd_panel_swap_xy(g_panel_handle, false);
     esp_lcd_panel_disp_on_off(g_panel_handle, true);
 }
 
