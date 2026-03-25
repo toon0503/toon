@@ -43,41 +43,70 @@ void control_io(void)
         oled_refresh();
         vTaskDelay(pdMS_TO_TICKS(500));
         
-        // IO0=100%, IO1=0%, IO2=100%, IO3=0%
-        pwm_set_duty(0, 1023);  // 100%占空比
-        pwm_set_duty(1, 0);      // 0%占空比
-        pwm_set_duty(2, 1023);  // 100%占空比
-        pwm_set_duty(3, 0);      // 0%占空比
-        // 显示状态
-        pwm_display_status();
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        
-        // IO0=0%, IO1=100%, IO2=0%, IO3=100%
-        pwm_set_duty(0, 0);      // 0%占空比
-        pwm_set_duty(1, 1023);  // 100%占空比
-        pwm_set_duty(2, 0);      // 0%占空比
-        pwm_set_duty(3, 1023);  // 100%占空比
-        // 显示状态
-        pwm_display_status();
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        
-        // IO0=50%, IO1=50%, IO2=50%, IO3=50%
-        pwm_set_duty(0, 512);    // 50%占空比
-        pwm_set_duty(1, 512);    // 50%占空比
-        pwm_set_duty(2, 512);    // 50%占空比
-        pwm_set_duty(3, 512);    // 50%占空比
-        // 显示状态
-        pwm_display_status();
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        
-        // IO0=0%, IO1=0%, IO2=0%, IO3=0%
+        // 停止：IO0-3的PWM都为0
+        oled_clear();
+        oled_draw_string(0, 0, "Stop");
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(500));
         pwm_set_duty(0, 0);      // 0%占空比
         pwm_set_duty(1, 0);      // 0%占空比
         pwm_set_duty(2, 0);      // 0%占空比
         pwm_set_duty(3, 0);      // 0%占空比
         // 显示状态
         pwm_display_status();
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        
+        // 前进：IO1和IO2的PWM为500，IO0和IO3的PWM为0
+        oled_clear();
+        oled_draw_string(0, 0, "Forward");
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(500));
+        pwm_set_duty(0, 0);      // 0%占空比
+        pwm_set_duty(1, 500);    // 500占空比
+        pwm_set_duty(2, 500);    // 500占空比
+        pwm_set_duty(3, 0);      // 0%占空比
+        // 显示状态
+        pwm_display_status();
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        
+        // 后退：IO2和IO3的PWM为500，IO0和IO1的PWM为0
+        oled_clear();
+        oled_draw_string(0, 0, "Backward");
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(500));
+        pwm_set_duty(0, 500);      // 0%占空比
+        pwm_set_duty(1, 0);      // 0%占空比
+        pwm_set_duty(2, 0);    // 500占空比
+        pwm_set_duty(3, 500);    // 500占空比
+        // 显示状态
+        pwm_display_status();
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        
+        // 左转：IO0-2的PWM为0，IO3的PWM为500
+        oled_clear();
+        oled_draw_string(0, 0, "Left");
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(500));
+        pwm_set_duty(0, 0);      // 0%占空比
+        pwm_set_duty(1, 0);      // 0%占空比
+        pwm_set_duty(2, 0);      // 0%占空比
+        pwm_set_duty(3, 500);    // 500占空比
+        // 显示状态
+        pwm_display_status();
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        
+        // 右转：IO1-3的PWM为0，IO0的PWM为500
+        oled_clear();
+        oled_draw_string(0, 0, "Right");
+        oled_refresh();
+        vTaskDelay(pdMS_TO_TICKS(500));
+        pwm_set_duty(0, 500);    // 500占空比
+        pwm_set_duty(1, 0);      // 0%占空比
+        pwm_set_duty(2, 0);      // 0%占空比
+        pwm_set_duty(3, 0);      // 0%占空比
+        // 显示状态
+        pwm_display_status();
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
